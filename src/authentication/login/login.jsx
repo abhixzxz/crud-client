@@ -36,9 +36,13 @@ const LoginPage = () => {
     validationSchema: validationSchema,
     onSubmit: async (values, actions) => {
       try {
-        const response = await axios.post("/api/auth/login", values, {
-          withCredentials: true,
-        });
+        const response = await axios.post(
+          "https://crud-server-g57r.vercel.app/api/auth/login",
+          values,
+          {
+            withCredentials: true,
+          }
+        );
         if (response.status === 200) {
           setSnackbarSeverity("success");
           setSnackbarMessage("Login successful");
