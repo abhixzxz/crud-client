@@ -37,7 +37,7 @@ const LoginPage = () => {
     onSubmit: async (values, actions) => {
       try {
         const response = await axios.post(
-          "https://crud-server-g57r.vercel.app/api/auth/login",
+          "https://crud-server-amiyon.onrender.com/api/auth/login",
           values,
           {
             withCredentials: true,

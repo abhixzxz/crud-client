@@ -39,7 +39,9 @@ const CompaniesDetails = () => {
 
   useEffect(() => {
     axios
-      .get("/api/companies/getAllCompany")
+      .get(
+        "https://crud-server-amiyon.onrender.com/api/companies/getAllCompany"
+      )
       .then((response) => {
         setCompanies(response.data);
       })
@@ -63,7 +65,9 @@ const CompaniesDetails = () => {
   const handleDelete = async (index) => {
     const companyId = companies[index].id;
     try {
-      await axios.delete(`/api/companies/deleteCompany/${companyId}`);
+      await axios.delete(
+        `https://crud-server-amiyon.onrender.com/api/companies/deleteCompany/${companyId}`
+      );
       const updatedCompanies = companies.filter((_, i) => i !== index);
       setCompanies(updatedCompanies);
       console.log("Deleted company at index:", index);
@@ -105,7 +109,7 @@ const CompaniesDetails = () => {
         if (isEditing) {
           const companyId = currentCompany.id;
           response = await axios.put(
-            `/api/companies/updateCompany/${companyId}`,
+            `https://crud-server-amiyon.onrender.com/api/companies/updateCompany/${companyId}`,
             formData,
             {
               headers: {
@@ -115,15 +119,19 @@ const CompaniesDetails = () => {
           );
           console.log("Company updated:", response.data);
         } else {
-          response = await axios.post("/api/companies/addCompany", formData, {
-            headers: {
-              "Content-Type": "multipart/form-data",
-            },
-          });
+          response = await axios.post(
+            "https://crud-server-amiyon.onrender.com/api/companies/addCompany",
+            formData,
+            {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          );
           console.log("Company created:", response.data);
         }
         const updatedCompanies = await axios.get(
-          "/api/companies/getAllCompany"
+          "https://crud-server-amiyon.onrender.com/api/companies/getAllCompany"
         );
         setCompanies(updatedCompanies.data);
       } catch (error) {

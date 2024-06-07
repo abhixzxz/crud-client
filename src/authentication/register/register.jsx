@@ -37,7 +37,10 @@ const RegisterPage = () => {
     onSubmit: async (values, actions) => {
       // console.log(values);
       try {
-        const response = await axios.post("/api/auth/register", values);
+        const response = await axios.post(
+          "https://crud-server-amiyon.onrender.com/api/auth/register",
+          values
+        );
         console.log("Response data:", response);
         if (response.status === 201) {
           setSnackbarSeverity("success");

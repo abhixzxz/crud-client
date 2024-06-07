@@ -19,20 +19,24 @@ import {
   MenuItem,
   FormControl,
   InputLabel,
+  CircularProgress,
+  Typography,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import AddIcon from "@mui/icons-material/Add";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import ReadModal from "./readModal/readModal";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
 import { useAuth } from "../../context/authContext";
 
 const EmployeeDetails = () => {
   const [employees, setEmployees] = useState([]);
   const [companies, setCompanies] = useState([]);
+  const [loadingEmployees, setLoadingEmployees] = useState(true);
+  const [loadingCompanies, setLoadingCompanies] = useState(true);
   const [openModal, setOpenModal] = useState(false);
   const [currentEmployee, setCurrentEmployee] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
@@ -43,23 +47,33 @@ const EmployeeDetails = () => {
 
   useEffect(() => {
     axios
-      .get("/api/employees/getAllEmployees")
+      .get(
+        "https://crud-server-amiyon.onrender.com/api/employees/getAllEmployees"
+      )
       .then((response) => {
         setEmployees(response.data);
       })
       .catch((error) => {
         console.error("Error fetching employee data:", error);
+      })
+      .finally(() => {
+        setLoadingEmployees(false);
       });
   }, []);
 
   useEffect(() => {
     axios
-      .get("/api/companies/getAllCompany")
+      .get(
+        "https://crud-server-amiyon.onrender.com/api/companies/getAllCompany"
+      )
       .then((response) => {
         setCompanies(response.data);
       })
       .catch((error) => {
         console.error("Error fetching company data:", error);
+      })
+      .finally(() => {
+        setLoadingCompanies(false);
       });
   }, []);
 
@@ -81,7 +95,9 @@ const EmployeeDetails = () => {
   const handleDelete = async (index) => {
     const employeeId = employees[index].id;
     try {
-      await axios.delete(`/api/employees/deleteEmployee/${employeeId}`);
+      await axios.delete(
+        `https://crud-server-amiyon.onrender.com/api/employees/deleteEmployee/${employeeId}`
+      );
       const updatedEmployees = employees.filter((_, i) => i !== index);
       setEmployees(updatedEmployees);
       console.log("Deleted employee at index:", index);
@@ -126,17 +142,20 @@ const EmployeeDetails = () => {
         if (isEditing) {
           const employeeId = currentEmployee.id;
           response = await axios.put(
-            `/api/employees/updateEmployee/${employeeId}`,
+            `https://crud-server-amiyon.onrender.com/api/employees/updateEmployee/${employeeId}`,
             values
           );
           console.log("Employee updated:", response.data);
         } else {
-          response = await axios.post("/api/employees/addEmployee", values);
+          response = await axios.post(
+            "https://crud-server-amiyon.onrender.com/api/employees/addEmployee",
+            values
+          );
           console.log("Employee created:", response.data);
         }
 
         const updatedEmployees = await axios.get(
-          "/api/employees/getAllEmployees"
+          "https://crud-server-amiyon.onrender.com/api/employees/getAllEmployees"
         );
         setEmployees(updatedEmployees.data);
       } catch (error) {
@@ -161,7 +180,6 @@ const EmployeeDetails = () => {
     }
   }, [currentEmployee]);
 
-  // i did this for in table their is company id only listed, for user experince , listed companyname
   const getCompanyNameById = (companyId) => {
     const company = companies.find((company) => company.id === companyId);
     return company ? company.name : "Unknown";
@@ -263,52 +281,60 @@ const EmployeeDetails = () => {
             </TableRow>
           </TableHead>
           <TableBody>
-            {employees.map((employee, index) => (
-              <TableRow key={index}>
-                <TableCell>{employee.firstName}</TableCell>
-                <TableCell>{employee.lastName}</TableCell>
-                <TableCell>{getCompanyNameById(employee.company)}</TableCell>
-                <TableCell>{employee.email}</TableCell>
-                <TableCell>{employee.phone}</TableCell>
-                <TableCell>
-                  <Button
-                    style={{
-                      marginRight: "10px",
-                      color: "green",
-                    }}
-                    startIcon={<VisibilityIcon />}
-                    onClick={() => handleRead(employee)}
-                  >
-                    Read
-                  </Button>
-                  <Button
-                    style={{
-                      marginRight: "10px",
-                    }}
-                    startIcon={<EditIcon />}
-                    onClick={() => handleEdit(index)}
-                  >
-                    Edit
-                  </Button>
-                  <Button
-                    style={{
-                      marginRight: "10px",
-                      color: "red",
-                    }}
-                    startIcon={
-                      <DeleteIcon
-                        style={{
-                          color: "red",
-                        }}
-                      />
-                    }
-                    onClick={() => handleDelete(index)}
-                  >
-                    Delete
-                  </Button>
+            {loadingEmployees ? (
+              <TableRow>
+                <TableCell colSpan={7} align="center">
+                  <CircularProgress />
                 </TableCell>
               </TableRow>
-            ))}
+            ) : (
+              employees.map((employee, index) => (
+                <TableRow key={index}>
+                  <TableCell>{employee.firstName}</TableCell>
+                  <TableCell>{employee.lastName}</TableCell>
+                  <TableCell>{getCompanyNameById(employee.company)}</TableCell>
+                  <TableCell>{employee.email}</TableCell>
+                  <TableCell>{employee.phone}</TableCell>
+                  <TableCell>
+                    <Button
+                      style={{
+                        marginRight: "10px",
+                        color: "green",
+                      }}
+                      startIcon={<VisibilityIcon />}
+                      onClick={() => handleRead(employee)}
+                    >
+                      Read
+                    </Button>
+                    <Button
+                      style={{
+                        marginRight: "10px",
+                      }}
+                      startIcon={<EditIcon />}
+                      onClick={() => handleEdit(index)}
+                    >
+                      Edit
+                    </Button>
+                    <Button
+                      style={{
+                        marginRight: "10px",
+                        color: "red",
+                      }}
+                      startIcon={
+                        <DeleteIcon
+                          style={{
+                            color: "red",
+                          }}
+                        />
+                      }
+                      onClick={() => handleDelete(index)}
+                    >
+                      Delete
+                    </Button>
+                  </TableCell>
+                </TableRow>
+              ))
+            )}
           </TableBody>
           <ReadModal
             isOpen={readModalOpen}
@@ -378,11 +404,17 @@ const EmployeeDetails = () => {
                 onChange={formik.handleChange}
                 error={formik.touched.company && Boolean(formik.errors.company)}
               >
-                {companies.map((company) => (
-                  <MenuItem key={company.id} value={company.id}>
-                    {company.name}
+                {loadingCompanies ? (
+                  <MenuItem disabled>
+                    <CircularProgress size={24} />
                   </MenuItem>
-                ))}
+                ) : (
+                  companies.map((company) => (
+                    <MenuItem key={company.id} value={company.id}>
+                      {company.name}
+                    </MenuItem>
+                  ))
+                )}
               </Select>
             </FormControl>
             <TextField

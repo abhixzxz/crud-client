@@ -22,7 +22,7 @@ const UserTable = () => {
     const fetchUsers = async () => {
       try {
         const response = await axios.get(
-          "http://localhost:5001/api/auth/getAllUsers"
+          "https://crud-server-amiyon.onrender.com/api/auth/getAllUsers"
         );
         setUsers(response.data);
       } catch (err) {
